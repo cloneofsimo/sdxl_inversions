@@ -1,5 +1,13 @@
 # DDIM Inversion, Prompt2Prompt, Plug&Play for SDXL [WIP]
 
+<!-- #region -->
+<p align="center">
+<img  src="contents/ddim.png">
+</p>
+<!-- #endregion -->
+
+WIP
+
 Exploring edits, one by one, for SDXL.
 
 
