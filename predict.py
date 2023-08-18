@@ -40,50 +40,48 @@ class Predictor(BasePredictor):
 
     def predict(
         self,
-        image: Path = Input(
+        original_image: Path = Input(
             description="base image",
         ),
-        image_prompt: str = Input(
+        original_prompt: str = Input(
             description="description of image",
         ),
-        negative_image_prompt: str = Input(
+        original_negative_prompt: str = Input(
             description="negative description of image",
             default=None,
         ),
-        prompt: str = Input(description="new prompt"),
-        negative_prompt: str = Input(description="new negative prompt", default=None),
+        num_inversion_steps: int = Input(
+            description="Number of steps to calculate original latents", ge=1, le=500, default=50
+        ),
+        new_prompt: str = Input(description="new prompt"),
+        new_negative_prompt: str = Input(description="new negative prompt", default=None),
+        num_inference_steps: int = Input(
+            description="denoising steps to generate new image", ge=1, le=500, default=50
+        ),
         guidance_scale: float = Input(
             description="guidance for DDIM inversion", default=3.5
         ),
-        num_inference_steps: int = Input(
-            description="Number of denoising steps", ge=1, le=500, default=50
-        ),
-        num_inversion_steps: int = Input(
-            description="Number of steps to determine latents", ge=1, le=500, default=50
-        ),
-                apply_watermark: bool = Input(
+        apply_watermark: bool = Input(
             description="Applies a watermark to enable determining if an image is generated in downstream applications. If you have other provisions for generating or deploying images safely, you can use this to disable watermarking.",
             default=True,
         ),
-
     ) -> Path:
-        init_image = PIL.Image.open(image)
+        init_image = PIL.Image.open(original_image)
 
         x = self.custom_pipe(
-            prompt=image_prompt,
-            negative_prompt=negative_image_prompt,
+            prompt=original_prompt,
+            negative_prompt=original_negative_prompt,
             image=init_image,
             num_inference_steps=num_inversion_steps,
         )
-
 
         if not apply_watermark:
             watermark_cache = self.pipe.watermark
             self.pipe.watermark = None
 
         result = self.pipe(
-            prompt=prompt,
-            negative_prompt=negative_prompt,
+            prompt=new_prompt,
+            negative_prompt=new_negative_prompt,
             latents=x[0].clone(),
             guidance_scale=guidance_scale,
             num_inference_steps=num_inference_steps,
