@@ -51,15 +51,23 @@ class Predictor(BasePredictor):
             default=None,
         ),
         num_inversion_steps: int = Input(
-            description="Number of steps to calculate original latents", ge=1, le=500, default=50
+            description="Number of steps to calculate original latents",
+            ge=1,
+            le=500,
+            default=50,
         ),
         new_prompt: str = Input(description="new prompt"),
-        new_negative_prompt: str = Input(description="new negative prompt", default=None),
+        new_negative_prompt: str = Input(
+            description="new negative prompt", default=None
+        ),
         num_inference_steps: int = Input(
-            description="denoising steps to generate new image", ge=1, le=500, default=50
+            description="denoising steps to generate new image",
+            ge=1,
+            le=500,
+            default=50,
         ),
         guidance_scale: float = Input(
-            description="guidance for DDIM inversion", default=3.5
+            description="Scale for classifier-free guidance", ge=1, le=50, default=3.5
         ),
         apply_watermark: bool = Input(
             description="Applies a watermark to enable determining if an image is generated in downstream applications. If you have other provisions for generating or deploying images safely, you can use this to disable watermarking.",
